@@ -2,37 +2,48 @@ from __future__ import annotations
 
 """
 Module quản lý Dependency Injection cho FastAPI.
-Dùng singleton pattern để đảm bảo toàn bộ ứng dụng dùng chung một instance Repository và Service.
-SOLID: Dependency Inversion — API layer nhận Service qua hàm get_student_service(), không tự khởi tạo.
+
+Thay vì dùng singleton toàn cục, mỗi session_id sẽ có
+Repository và Service riêng — đảm bảo dữ liệu độc lập.
+
+SOLID: Dependency Inversion — API layer nhận Service qua
+hàm get_student_service(), không tự khởi tạo.
 """
 
-from functools import lru_cache
 from app.repository.student_repository import BTreeStudentRepository
 from app.service.student_service import StudentService
 
+# Dict lưu repository theo session_id
+_session_repositories: dict[str, BTreeStudentRepository] = {}
 
-@lru_cache(maxsize=1)
-def get_repository() -> BTreeStudentRepository:
+
+def get_repository_for_session(session_id: str) -> BTreeStudentRepository:
     """
-    Tạo và cache một instance BTreeStudentRepository duy nhất.
+    Lấy hoặc tạo mới Repository cho session_id.
 
-    lru_cache đảm bảo hàm này chỉ chạy một lần trong suốt vòng đời ứng dụng → singleton pattern.
+    Mỗi session_id có 1 BTreeStudentRepository riêng biệt
+    → dữ liệu hoàn toàn độc lập giữa các người dùng.
+
+    Args:
+        session_id: UUID định danh phiên làm việc của người dùng.
 
     Returns:
-        Instance BTreeStudentRepository duy nhất.
+        BTreeStudentRepository tương ứng với session_id.
     """
-    return BTreeStudentRepository()
+    if session_id not in _session_repositories:
+        _session_repositories[session_id] = BTreeStudentRepository()
+    return _session_repositories[session_id]
 
 
-@lru_cache(maxsize=1)
-def get_student_service() -> StudentService:
+def get_student_service_for_session(session_id: str) -> StudentService:
     """
-    Tạo và cache một instance StudentService duy nhất.
+    Tạo StudentService với Repository tương ứng session_id.
 
-    Inject repository vào service tại đây — đây là điểm
-    duy nhất trong ứng dụng biết implementation cụ thể là BTree.
+    Args:
+        session_id: UUID định danh phiên làm việc của người dùng.
 
     Returns:
-        Instance StudentService duy nhất.
+        StudentService được inject đúng Repository.
     """
-    return StudentService(repository=get_repository())
+    repo = get_repository_for_session(session_id)
+    return StudentService(repository=repo)

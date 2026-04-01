@@ -12,10 +12,26 @@ import type {
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "/api";
 
+/** Lấy hoặc tạo session_id mới cho người dùng */
+function getSessionId(): string {
+  let sessionId = localStorage.getItem("session_id");
+  if (!sessionId) {
+    sessionId = crypto.randomUUID();
+    localStorage.setItem("session_id", sessionId);
+  }
+  return sessionId;
+}
+
 const api = axios.create({
   baseURL: BASE_URL,
   headers: { "Content-Type": "application/json" },
   timeout: 15000,
+});
+
+/** Tự động thêm X-Session-Id vào mọi request */
+api.interceptors.request.use((config) => {
+  config.headers["X-Session-Id"] = getSessionId();
+  return config;
 });
 
 export interface CreateStudentDto {
@@ -84,5 +100,10 @@ export const studentApi = {
       "/students/tree",
     );
     return res.data.data;
+  },
+
+  /** Xóa session hiện tại — tạo session mới khi gọi lại */
+  resetSession: (): void => {
+    localStorage.removeItem("session_id");
   },
 };

@@ -13,17 +13,19 @@ SOLID: Single Responsibility — chỉ lo HTTP routing,
 không chứa business logic hay storage logic.
 """
 
-from fastapi import APIRouter, HTTPException, Query, Depends
+from fastapi import APIRouter, HTTPException, Query, Header
+from typing import Optional
 from app.api.schemas import (
     StudentCreateRequest,
     StudentUpdateRequest,
     ApiResponse,
     TreeSnapshotResponse,
 )
-from app.api.dependencies import get_student_service
-from app.service.student_service import StudentService
+from app.api.dependencies import get_student_service_for_session
 
 router = APIRouter(prefix="/api/students", tags=["Students"])
+
+DEFAULT_SESSION = "default"
 
 
 def _clean(msg: str) -> str:
@@ -31,9 +33,14 @@ def _clean(msg: str) -> str:
     return str(msg).strip("'\"")
 
 
+def _get_session(x_session_id: Optional[str]) -> str:
+    """Trả về session_id hợp lệ, dùng DEFAULT nếu không có."""
+    return x_session_id.strip() if x_session_id else DEFAULT_SESSION
+
+
 @router.get("", response_model=ApiResponse)
 async def get_all_students(
-    service: StudentService = Depends(get_student_service),
+    x_session_id: Optional[str] = Header(default=None),
 ) -> ApiResponse:
     """
     Lấy toàn bộ danh sách sinh viên theo thứ tự thêm vào.
@@ -41,6 +48,7 @@ async def get_all_students(
     Returns:
         ApiResponse chứa danh sách sinh viên.
     """
+    service = get_student_service_for_session(_get_session(x_session_id))
     students = service.get_all_students()
     return ApiResponse(
         success=True,
@@ -52,7 +60,7 @@ async def get_all_students(
 @router.get("/search", response_model=ApiResponse)
 async def search_students(
     name: str = Query(min_length=1, description="Student name to search"),
-    service: StudentService = Depends(get_student_service),
+    x_session_id: Optional[str] = Header(default=None),
 ) -> ApiResponse:
     """
     Tìm kiếm sinh viên theo tên (partial match).
@@ -63,6 +71,7 @@ async def search_students(
     Returns:
         ApiResponse chứa danh sách sinh viên khớp.
     """
+    service = get_student_service_for_session(_get_session(x_session_id))
     try:
         students = service.search_by_name(name)
         return ApiResponse(
@@ -76,7 +85,7 @@ async def search_students(
 
 @router.get("/tree", response_model=TreeSnapshotResponse)
 async def get_tree_snapshot(
-    service: StudentService = Depends(get_student_service),
+    x_session_id: Optional[str] = Header(default=None),
 ) -> TreeSnapshotResponse:
     """
     Lấy snapshot cấu trúc B-Tree để frontend visualize.
@@ -84,6 +93,7 @@ async def get_tree_snapshot(
     Returns:
         TreeSnapshotResponse chứa cấu trúc cây.
     """
+    service = get_student_service_for_session(_get_session(x_session_id))
     snapshot = service.get_tree_snapshot()
     return TreeSnapshotResponse(success=True, data=snapshot)
 
@@ -91,7 +101,7 @@ async def get_tree_snapshot(
 @router.get("/{student_id}", response_model=ApiResponse)
 async def get_student(
     student_id: int,
-    service: StudentService = Depends(get_student_service),
+    x_session_id: Optional[str] = Header(default=None),
 ) -> ApiResponse:
     """
     Lấy thông tin một sinh viên theo mã số.
@@ -102,6 +112,7 @@ async def get_student(
     Returns:
         ApiResponse chứa thông tin sinh viên.
     """
+    service = get_student_service_for_session(_get_session(x_session_id))
     try:
         student = service.get_student(student_id)
         return ApiResponse(
@@ -116,7 +127,7 @@ async def get_student(
 @router.post("", response_model=ApiResponse, status_code=201)
 async def create_student(
     body: StudentCreateRequest,
-    service: StudentService = Depends(get_student_service),
+    x_session_id: Optional[str] = Header(default=None),
 ) -> ApiResponse:
     """
     Tạo sinh viên mới.
@@ -127,6 +138,7 @@ async def create_student(
     Returns:
         ApiResponse chứa thông tin sinh viên vừa tạo.
     """
+    service = get_student_service_for_session(_get_session(x_session_id))
     try:
         student = service.create_student(
             student_id=body.student_id,
@@ -151,7 +163,7 @@ async def create_student(
 async def update_student(
     student_id: int,
     body: StudentUpdateRequest,
-    service: StudentService = Depends(get_student_service),
+    x_session_id: Optional[str] = Header(default=None),
 ) -> ApiResponse:
     """
     Cập nhật thông tin sinh viên.
@@ -163,6 +175,7 @@ async def update_student(
     Returns:
         ApiResponse chứa thông tin sinh viên sau khi cập nhật.
     """
+    service = get_student_service_for_session(_get_session(x_session_id))
     try:
         student = service.update_student(
             student_id=student_id,
@@ -186,7 +199,7 @@ async def update_student(
 @router.delete("/{student_id}", response_model=ApiResponse)
 async def delete_student(
     student_id: int,
-    service: StudentService = Depends(get_student_service),
+    x_session_id: Optional[str] = Header(default=None),
 ) -> ApiResponse:
     """
     Xóa sinh viên khỏi hệ thống.
@@ -197,6 +210,7 @@ async def delete_student(
     Returns:
         ApiResponse xác nhận xóa thành công.
     """
+    service = get_student_service_for_session(_get_session(x_session_id))
     try:
         result = service.delete_student(student_id)
         return ApiResponse(
