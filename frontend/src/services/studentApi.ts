@@ -10,10 +10,12 @@ import type {
   BTreeSnapshot,
 } from "@/domain/types";
 
+const BASE_URL = import.meta.env.VITE_API_URL ?? "/api";
+
 const api = axios.create({
-  baseURL: "/api",
+  baseURL: BASE_URL,
   headers: { "Content-Type": "application/json" },
-  timeout: 10000,
+  timeout: 15000,
 });
 
 export interface CreateStudentDto {
@@ -49,7 +51,6 @@ export const studentApi = {
     return res.data.data!;
   },
 
-  /** Search by Student ID — dùng GET /students/{id} */
   searchById: async (id: number): Promise<Student | null> => {
     try {
       const res = await api.get<ApiResponse<Student>>(`/students/${id}`);

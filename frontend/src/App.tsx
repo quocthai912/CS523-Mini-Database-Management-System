@@ -47,7 +47,10 @@ export default function App() {
   useEffect(() => {
     const checkConnection = async () => {
       try {
-        await fetch("http://localhost:8000/health");
+        const backendUrl = import.meta.env.VITE_API_URL
+          ? import.meta.env.VITE_API_URL.replace("/api", "")
+          : "http://localhost:8000";
+        await fetch(`${backendUrl}/health`);
         setIsConnected(true);
       } catch {
         setIsConnected(false);
