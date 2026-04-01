@@ -33,7 +33,7 @@ LINK DEMO: https://www.cs523-quocthai-minidbms.me/
   + Quan sát cây tự động tái cân bằng thông qua các thao tác Split, Merge và Borrow.
 ### Tìm kiếm và lọc dữ liệu:
   + Tìm kiếm sinh viên theo Tên với độ phức tạp O(n).
-  + Tìm kiếm sinh viên theo Mã số sinh viên sử dụng thuật toán tìm kiếm B-Tree với độ phức tạp O(log n).
+  + Tìm kiếm sinh viên theo Mã số sinh viên sử dụng thuật toán tìm kiếm B-Tree với độ phức tạp O(logn).
 ### Hai chế độ hiển thị dữ liệu:
   + Insertion Order: Hiển thị danh sách sinh viên theo thứ tự thêm vào hệ thống.
   + Sort by ID: Hiển thị danh sách sinh viên theo thứ tự Mã số sinh viên tăng dần, sử dụng kết quả in-order traversal của cây B-Tree.
