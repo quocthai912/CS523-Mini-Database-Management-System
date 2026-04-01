@@ -15,10 +15,9 @@ load_dotenv()
 class Settings(BaseSettings):
     """Cấu hình ứng dụng được đọc từ file .env."""
 
-    app_name: str = "Mini DBMS Indexing Visualizer"
+    app_name: str = "Mini Database Management System"
     app_version: str = "1.0.0"
-    debug: bool = True
-    cors_origins: list[str] = ["http://localhost:5173"]
+    debug: bool = False
 
     class Config:
         env_file = ".env"
@@ -30,18 +29,17 @@ app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
     debug=settings.debug,
-    description="API quản lý sinh viên với minh hoạ B-Tree indexing",
+    description="Hệ Quản Trị Cơ Sở Dữ Liệu Mini Sử Dụng Cây BTree Làm Chỉ Mục",
 )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Mount Routers
 from app.api.student_router import router as student_router
 
 app.include_router(student_router)
@@ -59,5 +57,5 @@ async def root() -> dict:
 
 @app.get("/health", tags=["Health"])
 async def health_check() -> dict:
-    """Chi tiết trạng thái hệ thống."""
+    """Kiểm tra chi tiết trạng thái hệ thống"""
     return {"status": "healthy", "debug_mode": settings.debug}
