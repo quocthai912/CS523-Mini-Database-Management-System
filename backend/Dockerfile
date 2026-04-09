@@ -1,3 +1,4 @@
+# Đóng gói toàn bộ Backend thành Docker Container để triển khai trên Digital Ocean
 FROM python:3.11-slim
 
 WORKDIR /app
