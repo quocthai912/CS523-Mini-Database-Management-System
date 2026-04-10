@@ -6,6 +6,9 @@
 <h1 align="center">CS523 - CẤU TRÚC DỮ LIỆU VÀ GIẢI THUẬT NÂNG CAO</h1>
 
 # MINI DATABASE MANAGEMENT SYSTEM
+![React](https://img.shields.io/badge/Frontend-ReactJS-61DAFB?style=flat-square&logo=react)
+![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?style=flat-square&logo=fastapi)
+![Python](https://img.shields.io/badge/Language-Python_3.x-3776AB?style=flat-square&logo=python)
 > +	Ứng dụng Web Mini Database Management System là một hệ thống quản lý sinh viên kết hợp minh họa trực quan thuật toán đánh chỉ mục bằng Cây B-Tree bậc 3 (2-3 Tree). Ứng dụng được xây dựng theo kiến trúc Clean Architecture và tuân thủ nghiêm túc các nguyên tắc SOLID.
 > +	Mục tiêu chính của ứng dụng là minh họa cách một hệ quản trị cơ sở dữ liệu thực tế sử dụng cấu trúc B-Tree để đánh chỉ mục và tăng tốc độ tìm kiếm. Mỗi thao tác thêm, sửa, xóa trên danh sách sinh viên đều được phản ánh trực tiếp lên cấu trúc cây B-Tree hiển thị trên giao diện, giúp người dùng quan sát rõ ràng cách cây tự cân bằng thông qua các thao tác Split, Merge và Borrow.
 
