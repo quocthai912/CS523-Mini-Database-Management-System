@@ -12,7 +12,7 @@
 > +	Ứng dụng Web Mini Database Management System là một hệ thống quản lý sinh viên kết hợp minh họa trực quan thuật toán đánh chỉ mục bằng Cây B-Tree bậc 3 (2-3 Tree). Ứng dụng được xây dựng theo kiến trúc Clean Architecture và tuân thủ nghiêm túc các nguyên tắc SOLID.
 > +	Mục tiêu chính của ứng dụng là minh họa cách một hệ quản trị cơ sở dữ liệu thực tế sử dụng cấu trúc B-Tree để đánh chỉ mục và tăng tốc độ tìm kiếm. Mỗi thao tác thêm, sửa, xóa trên danh sách sinh viên đều được phản ánh trực tiếp lên cấu trúc cây B-Tree hiển thị trên giao diện, giúp người dùng quan sát rõ ràng cách cây tự cân bằng thông qua các thao tác Split, Merge và Borrow.
 
-LINK DEMO: https://www.cs523-quocthai-minidbms.me/
+LINK DEMO: https://cs-523-mini-database-management-system.vercel.app/
 ---
 ## 1. GIỚI THIỆU MÔN HỌC:
 | | |
@@ -57,9 +57,8 @@ LINK DEMO: https://www.cs523-quocthai-minidbms.me/
 | **Thuật toán** | B-Tree bậc 3 (2-3 Tree) |
 | **State Management** | Zustand |
 | **HTTP Client** | Axios |
-| **Deploy Backend** | DigitalOcean App Platform |
+| **Deploy Backend** | Render |
 | **Deploy Frontend** | Vercel |
-| **Custom Domain** | Namecheap (.me) |
 ---
 
 ## 4. CẤU TRÚC DỰ ÁN:
